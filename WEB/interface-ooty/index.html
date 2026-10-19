@@ -2,16 +2,25 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.scss" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>interface-ooty</title>
   </head>
   <body>
-    <form id="chat-form" class="form">
-      <input class="input" id="message" name="message" type="text" maxlength="10000" required />
-    </form>
-    <pre id="output" aria-live="polite"></pre>
+    <main class="terminal">
+      <h1 class="intro">Bonjour user 1</h1>
+
+      <div class="form-container">
+        <form id="chat-form" class="form">
+          <input class="input" id="message" name="message" type="text" aria-label="Votre message" maxlength="10000" autocomplete="off" spellcheck="false" autofocus required />
+        </form>
+      </div>
+      <pre class="output-user" id="output" aria-live="polite"></pre>
+    </main>
 
     <script type="module" src="/src/main.js"></script>
   </body>
