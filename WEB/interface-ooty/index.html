@@ -14,12 +14,14 @@
     <main class="terminal">
       <h1 class="intro">Bonjour user 1</h1>
 
+      <div class="messages" id="output" role="log" aria-label="Conversation" aria-live="polite"></div>
+
       <div class="form-container">
         <form id="chat-form" class="form">
           <input class="input" id="message" name="message" type="text" aria-label="Votre message" maxlength="10000" autocomplete="off" spellcheck="false" autofocus required />
+          <span class="input-cursor" aria-hidden="true"></span>
         </form>
       </div>
-      <pre class="output-user" id="output" aria-live="polite"></pre>
     </main>
 
     <script type="module" src="/src/main.js"></script>

@@ -9,13 +9,15 @@ $terminal-glow: 0 0 18px rgba($primary-color, 0.25);
 
 body {
   margin: 0;
-  min-height: 100svh;
+  height: 100svh;
+  overflow: hidden;
   padding: 32px 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: $primary-color;
   font-family: $terminal-font;
+  background-color: $background-color;
 }
 
 .terminal {
@@ -41,6 +43,7 @@ body {
 
 .form {
   display: flex;
+  position: relative;
 }
 
 .input {
@@ -52,13 +55,41 @@ body {
   outline: none;
   background: transparent;
   color: $primary-color;
-  caret-color: $primary-color;
+  caret-color: transparent;
   font-family: $terminal-font;
   font-size: 20px;
   font-weight: 400;
   line-height: 1.2;
   text-shadow: $terminal-glow;
   box-shadow: $terminal-glow;
+}
+
+.input-cursor {
+  position: absolute;
+  left: 19px;
+  top: 50%;
+  width: 10px;
+  height: 20px;
+  transform: translateY(-50%);
+  background: $primary-color;
+  box-shadow: $terminal-glow;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.input:focus:enabled + .input-cursor {
+  animation: cursor-blink 1s step-end infinite;
+}
+
+@keyframes cursor-blink {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 0;
+  }
 }
 
 .input:focus {
@@ -75,17 +106,98 @@ body {
   cursor: wait;
 }
 
-.output-user {
-  align-self: stretch;
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 600px;
+  min-height: 0;
+  // Le clavier pilote le defilement, sans molette ni barre de scroll.
+  overflow: hidden;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.message {
   margin: 0;
-  max-height: 320px;
-  overflow-y: auto;
+  max-width: 480px;
+  flex-shrink: 0;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   font: 400 20px / 1.4 $terminal-font;
   text-shadow: $terminal-glow;
+}
 
-  &:empty {
+.message--user {
+  align-self: flex-end;
+  text-align: right;
+}
+
+.message--machine {
+  align-self: flex-start;
+  text-align: left;
+
+  &::before {
+    content: "> ";
+  }
+}
+
+.loading-matrix {
+  display: inline-grid;
+  grid-template-columns: repeat(3, 3px);
+  grid-template-rows: repeat(3, 3px);
+  gap: 2px;
+  vertical-align: middle;
+}
+
+.loading-dot {
+  background: $primary-color;
+  opacity: 0.1;
+
+  &--both {
+    opacity: 1;
+  }
+
+  &--first,
+  &--second {
+    animation: loading-matrix-blink 1s step-end infinite;
+  }
+
+  &--second {
+    animation-delay: -0.5s;
+  }
+}
+
+@keyframes loading-matrix-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.1;
+  }
+}
+
+body.chat-started {
+  align-items: flex-start;
+
+  .intro,
+  .logo {
     display: none;
+  }
+
+  .terminal {
+    height: calc(100svh - 64px);
+  }
+
+  .messages {
+    flex: 1;
+  }
+
+  .form-container {
+    flex-shrink: 0;
   }
 }
