@@ -2,6 +2,7 @@ import Request from "./Request.js";
 import WifiSocket from "./wifiSocket.js";
 import setupCursor from "./cursor.js";
 import createLoadingMatrix from "./loadingMatrix.js";
+import TerminalBackground from "./TerminalBackground.js";
 
 const form = document.querySelector("#chat-form");
 const input = document.querySelector("#message");
@@ -9,6 +10,8 @@ setupCursor(input, document.querySelector(".input-cursor"));
 const output = document.querySelector("#output");
 const request = new Request(true);
 let followLatestMessage = true;
+
+new TerminalBackground(document.getElementById("bg"));
 
 function showLatestMessage() {
   if (followLatestMessage) {

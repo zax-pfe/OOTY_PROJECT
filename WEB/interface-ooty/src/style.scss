@@ -8,7 +8,6 @@ $terminal-glow: 0 0 18px rgba($primary-color, 0.25);
 }
 
 body {
-  margin: 0;
   height: 100svh;
   overflow: hidden;
   padding: 32px 24px;
@@ -20,12 +19,24 @@ body {
   background-color: $background-color;
 }
 
+.background-canvas {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+}
+
 .terminal {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 32px;
   flex-shrink: 0;
+}
+
+.logo {
+  width: 273px;
+  height: 189px;
 }
 
 .intro {
@@ -106,6 +117,10 @@ body {
   cursor: wait;
 }
 
+.dummy {
+  height: 20px;
+}
+
 .messages {
   display: flex;
   flex-direction: column;
@@ -154,30 +169,25 @@ body {
 
 .loading-dot {
   background: $primary-color;
-  opacity: 0.1;
-
-  &--both {
-    opacity: 1;
-  }
-
-  &--first,
-  &--second {
-    animation: loading-matrix-blink 1s step-end infinite;
-  }
-
-  &--second {
-    animation-delay: -0.5s;
-  }
+  animation: loading-matrix-blink 2s step-end infinite;
 }
 
 @keyframes loading-matrix-blink {
   0%,
   100% {
-    opacity: 1;
+    opacity: var(--frame-1);
+  }
+
+  25% {
+    opacity: var(--frame-2);
   }
 
   50% {
-    opacity: 0.1;
+    opacity: var(--frame-3);
+  }
+
+  75% {
+    opacity: var(--frame-4);
   }
 }
 

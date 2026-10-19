@@ -1,7 +1,11 @@
 export default function createLoadingMatrix() {
   // Coordonnees (x, y), avec (0, 0) en bas a gauche.
-  const firstFrame = ["0,0", "0,1", "1,1", "0,2", "1,2", "2,2"];
-  const secondFrame = ["0,2", "1,2", "1,1", "2,2", "2,1", "2,0"];
+  const frames = [
+    ["0,0", "0,1", "1,1", "0,2", "1,2", "2,2"],
+    ["0,2", "1,2", "1,1", "2,2", "2,1", "2,0"],
+    ["2,2", "2,1", "2,0", "1,1"],
+    ["2,0", "1,0", "0,0", "1,1", "0,2", "0,1"],
+  ];
   const matrix = document.createElement("span");
   matrix.className = "loading-matrix";
   matrix.setAttribute("role", "status");
@@ -14,13 +18,9 @@ export default function createLoadingMatrix() {
       const dot = document.createElement("span");
       dot.className = "loading-dot";
       dot.setAttribute("aria-hidden", "true");
-      if (firstFrame.includes(point) && secondFrame.includes(point)) {
-        dot.classList.add("loading-dot--both");
-      } else if (firstFrame.includes(point)) {
-        dot.classList.add("loading-dot--first");
-      } else if (secondFrame.includes(point)) {
-        dot.classList.add("loading-dot--second");
-      }
+      frames.forEach((frame, index) => {
+        dot.style.setProperty(`--frame-${index + 1}`, frame.includes(point) ? "1" : "0.1");
+      });
       matrix.append(dot);
     }
   }
