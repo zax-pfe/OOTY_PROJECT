@@ -1,5 +1,5 @@
 import Request from "./Request.js";
-import WifiSocket from "./wifiSocket.js";
+import WifiSocket from "./WifiSocket.js";
 import setupCursor from "./cursor.js";
 import createLoadingMatrix from "./loadingMatrix.js";
 import TerminalBackground from "./TerminalBackground.js";
@@ -12,6 +12,7 @@ const request = new Request(true);
 let followLatestMessage = true;
 
 new TerminalBackground(document.getElementById("bg"));
+const wifiSocket = new WifiSocket();
 
 function showLatestMessage() {
   if (followLatestMessage) {
@@ -37,6 +38,8 @@ form.addEventListener("submit", async (event) => {
 
   const message = input.value.trim();
   if (!message || input.disabled) return;
+
+  wifiSocket.sendMessage();
 
   document.body.classList.add("chat-started");
   followLatestMessage = true;

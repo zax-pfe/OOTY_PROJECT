@@ -3,12 +3,12 @@ export default class TerminalBackground {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.config = {
-      gap: 6, // espacement entre les points (px CSS)
-      minRadius: 0.4, // rayon minimum vers les bords
-      maxRadius: 1.6, // rayon maximum au centre
+      gap: 6, // espacement entre les points px
+      minRadius: 1, // rayon minimum
+      maxRadius: 1, // rayon maximum
       color: [20, 90, 40], // RGB des points
       background: "#020a04",
-      vignette: 1, // 0 à 1, assombrissement des bords
+      vignette: 0.1, // 0 à 1, assombrissement des bords
       ...options,
     };
 
