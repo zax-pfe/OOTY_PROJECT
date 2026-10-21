@@ -1,9 +1,12 @@
 export default class Request {
-  constructor(stream = false) {
+  constructor(stream = false, historySize = 5) {
+    if (!Number.isInteger(historySize) || historySize < 0) {
+      throw new Error("History size must be a non-negative integer");
+    }
     this.stream = stream;
     this.url = "http://localhost:8000/chat?stream=false";
     this.streamUrl = "http://localhost:8000/chat?stream=true";
-    this.historyMaxQuestion = 5;
+    this.historySize = historySize;
     this.conversation = [];
     this.pending = false;
   }
@@ -17,10 +20,9 @@ export default class Request {
       throw new Error("Pending");
     }
 
-    const history = this.conversation
-      .filter((entry) => entry.role === "user")
-      .map((entry) => entry.content)
-      .slice(-(this.historyMaxQuestion - 1));
+    const history = this.historySize === 0
+      ? []
+      : this.conversation.slice(-(this.historySize * 2));
 
     this.pending = true;
 
@@ -35,9 +37,7 @@ export default class Request {
         throw new Error(data.detail || `Erreur HTTP ${response.status}`);
       }
 
-      const data = this.stream
-        ? await this.readStream(response, onReply)
-        : await response.json();
+      const data = this.stream ? await this.readStream(response, onReply) : await response.json();
       if (typeof data.reply !== "string") {
         throw new Error("Invalid API reply");
       }
@@ -47,7 +47,7 @@ export default class Request {
         { role: "assistant", content: data.reply },
       );
 
-      const maxMessages = this.historyMaxQuestion * 2;
+      const maxMessages = this.historySize * 2;
       if (this.conversation.length > maxMessages) {
         this.conversation.splice(0, this.conversation.length - maxMessages);
       }

@@ -16,6 +16,7 @@ $terminal-glow: 0 0 18px rgba($primary-color, 0.25);
 }
 
 body {
+  margin: 0;
   height: 100svh;
   overflow: hidden;
   padding: 32px 24px;
@@ -28,10 +29,12 @@ body {
 }
 
 .background-canvas {
-  position: absolute;
+  position: fixed;
+  inset: 0;
   height: 100%;
   width: 100%;
   z-index: -1;
+  pointer-events: none;
 }
 
 .terminal {

@@ -8,7 +8,9 @@ const form = document.querySelector("#chat-form");
 const input = document.querySelector("#message");
 setupCursor(input, document.querySelector(".input-cursor"));
 const output = document.querySelector("#output");
-const request = new Request(true);
+// Nombre d'echanges precedents conserves (une question + une reponse).
+const historySize = 5;
+const request = new Request(true, historySize);
 let followLatestMessage = true;
 
 new TerminalBackground(document.getElementById("bg"));

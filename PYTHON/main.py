@@ -1,4 +1,5 @@
 import json
+from typing import Literal
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,26 +17,32 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 client = AsyncClient(host="http://localhost:11434", timeout=120.0)
-MODEL = "qwen2.5:1.5B"
+MODEL = "qwen2.5:3B"
 SYSTEM_PROMPT = "Answer only short an mystic answer"
+
+
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
 
 
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=10000)
-    history: list[str] = Field(default_factory=list)
+    history: list[ChatMessage] = Field(default_factory=list)
 
 
 @app.post("/chat")
 async def chat(body: ChatRequest, stream: bool = False):
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        *[entry.model_dump() for entry in body.history],
+        {"role": "user", "content": body.message},
+    ]
+    print("Messages sent to model:\n" + json.dumps(messages, ensure_ascii=False, indent=2), flush=True)
     try:
         response = await client.chat(
             model=MODEL,
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                # Four previous questions plus the current one: five maximum.
-                *[{"role": "user", "content": message} for message in body.history[-4:]],
-                {"role": "user", "content": body.message},
-            ],
+            messages=messages,
             stream=stream,
         )
         if stream:
