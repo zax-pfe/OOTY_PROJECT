@@ -39,7 +39,7 @@ export default class WifiSocket {
     }
 
     console.log("sending message");
-    this.ws.send("Hello World");
+    this.ws.send("experience:infection");
     return true;
   }
 }
