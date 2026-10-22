@@ -12,7 +12,11 @@ setupCursor(input, document.querySelector(".input-cursor"));
 const output = document.querySelector("#output");
 // Nombre d'echanges precedents conserves (une question + une reponse).
 const historySize = 5;
-const request = new Request(true, historySize);
+// Duree minimale de chargement en secondes avant l'envoi au modele.
+const minimumLoadingDuration = 3;
+// Intervalle minimal entre caracteres affiches en streaming, en secondes (0 = immediat).
+const streamDuration = 0.05;
+const request = new Request(true, historySize, streamDuration);
 let followLatestMessage = true;
 let typing = false;
 
@@ -63,7 +67,7 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
-  eventCaller("experience:loading");
+  eventCaller("experience:aspire");
   typing = false;
   wifiSocket.sendMessage();
 
@@ -82,17 +86,21 @@ form.addEventListener("submit", async (event) => {
   input.disabled = true;
 
   try {
+    await new Promise((resolve) => setTimeout(resolve, minimumLoadingDuration * 1000));
     const data = await request.ask(message, (reply) => {
       aiMessage.textContent = reply;
       showLatestMessage();
       if (!typing) {
-        eventCaller("experience:machineType");
+        eventCaller("experience:machineTyping");
+        eventCaller("experience:stopAspire");
         typing = true;
       }
     });
 
     console.log("Model :", data);
     aiMessage.textContent = data.reply;
+    // console.log("Le message du modele a fini d'etre ecrit.");
+    eventCaller("experience:endMachineTyping");
   } catch (error) {
     console.error("ERROR :", error);
     aiMessage.textContent = `Erreur : ${error.message}`;

@@ -1,9 +1,13 @@
 export default class Request {
-  constructor(stream = false, historySize = 5) {
+  constructor(stream = false, historySize = 5, streamDuration = 0) {
     if (!Number.isInteger(historySize) || historySize < 0) {
       throw new Error("History size must be a non-negative integer");
     }
+    if (!Number.isFinite(streamDuration) || streamDuration < 0) {
+      throw new Error("Stream duration must be a non-negative number");
+    }
     this.stream = stream;
+    this.streamDuration = streamDuration;
     this.url = "http://localhost:8000/chat?stream=false";
     this.streamUrl = "http://localhost:8000/chat?stream=true";
     this.historySize = historySize;
@@ -69,14 +73,28 @@ export default class Request {
     let buffer = "";
     let reply = "";
     let completed = false;
+    let lastCharacterTime = -Infinity;
 
-    const readLine = (line) => {
+    const readLine = async (line) => {
       if (!line.trim()) return;
       const chunk = JSON.parse(line);
       if (chunk.error) throw new Error(chunk.error);
       if (typeof chunk.reply !== "string") throw new Error("Invalid stream reply");
-      reply += chunk.reply;
-      if (chunk.reply) onReply(reply);
+      if (this.streamDuration === 0) {
+        reply += chunk.reply;
+        if (chunk.reply) onReply(reply);
+      } else {
+        for (const character of chunk.reply) {
+          let remaining = this.streamDuration * 1000 - (performance.now() - lastCharacterTime);
+          while (remaining > 0) {
+            await new Promise((resolve) => setTimeout(resolve, remaining));
+            remaining = this.streamDuration * 1000 - (performance.now() - lastCharacterTime);
+          }
+          reply += character;
+          onReply(reply);
+          lastCharacterTime = performance.now();
+        }
+      }
       if (chunk.done) completed = true;
     };
 
@@ -87,12 +105,12 @@ export default class Request {
 
         let newline;
         while (!completed && (newline = buffer.indexOf("\n")) !== -1) {
-          readLine(buffer.slice(0, newline));
+          await readLine(buffer.slice(0, newline));
           buffer = buffer.slice(newline + 1);
         }
 
         if (done) {
-          if (!completed && buffer.trim()) readLine(buffer);
+          if (!completed && buffer.trim()) await readLine(buffer);
           if (!completed) throw new Error("Stream interrupted");
           break;
         }

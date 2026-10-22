@@ -4,77 +4,81 @@ export default class SoundManager {
   constructor() {
     // this.soundLight = new Howl({ src: ["./Sounds/soundLight.wav"], volume: 0.2 });
 
-    // this.soundResponse = new Howl({
-    //   src: ["./Sounds/FootStepMetal.wav"],
-    //   loop: true,
-    //   volume: 0.1,
-    //   rate: 1.7,
-    // });
+    this.soundVersion = "A";
+    // _______________________ Volume ______________________ //
+    this.backGroundSoundVolume = 0.4;
+    this.machineTypingVolume = 0.6;
+    this.aspireVolume = 0.5;
+
+    this.machineTyping = new Howl({
+      src: ["./sounds/machineTyping.mp3"],
+      loop: true,
+      volume: this.machineTypingVolume,
+      rate: 1,
+    });
+
+    const version = this.soundVersion == "A" ? "A" : "B";
+    const soundPath = `./sounds/Version${version}/version${version}`;
+    const soundOptions = { loop: true, volume: this.aspireVolume, rate: 1 };
+
+    this.aspireSound = new Howl({
+      ...soundOptions,
+      src: [`${soundPath}aspire.mp3`],
+    });
+
+    this.replaceSound = new Howl({
+      ...soundOptions,
+      src: [`${soundPath}remplace.mp3`],
+    });
 
     // // Jouer la loop background boackrooms
-    // this.backGroundSoundVolume = 0.4;
-    // this.backGroundSound = new Howl({
-    //   src: ["./Sounds/soundLoop.mp3"],
-    //   loop: true,
-    //   volume: this.backGroundSoundVolume,
-    // });
+    this.backGroundSound = new Howl({
+      src: ["./sounds/backgroundLoop.mp3"],
+      loop: true,
+      volume: this.backGroundSoundVolume,
+    });
 
-    // this.backGroundSound.play();
+    this.backGroundSound.play();
 
     window.addEventListener("experience:powerOn", () => {
-      // if (this.eventFireReceived) return;
-      // if (this.laserEventReceived) console.log("play sound");
-      // this.soundLight.play();
-      // this.eventFireReceived = true;
-      // this.eventEndFireReceived = false;
       console.log("power on received");
     });
 
-    window.addEventListener("experience:machineType", () => {
-      // if (this.eventLaserReceived) return;
-      // this.soundLight.stop();
-      // this.soundLaser.play();
-      // // this.soundLaser.play();
-      // this.eventLaserReceived = true;
+    // _________________ Machine typing ____________ //
 
-      console.log("Machine typing received");
+    window.addEventListener("experience:machineTyping", () => {
+      this.machineTyping.stop();
+      this.machineTyping.play();
+      this.machineTyping.fade(0, this.machineTypingVolume, 200);
     });
 
-    window.addEventListener("experience:loading", () => {
-      // if (this.eventEndFireReceived) return;
-      // this.soundLight.stop();
-      // this.soundLaser.stop();
-      // this.eventEndFireReceived = true;
-      // this.eventLaserReceived = false;
-      // this.eventFireReceived = false;
-      console.log("loading event received");
+    window.addEventListener("experience:endMachineTyping", () => {
+      this.machineTyping.fade(this.machineTyping.volume(), 0, 200);
+      this.delayEvent(0.2, this.stopMachineTypingSound);
     });
 
-    // window.addEventListener("game:hit", () => {
-    //   this.soundBurn.play();
-    //   this.soundLoop.fade(this.loopVolume, 0, 1);
-    // });
+    // _________________ Aspire _____________________ //
 
-    // window.addEventListener("game:walking", () => {
-    //   // console.log
-    //   this.soundWalk.stop();
-    //   this.soundWalk.fade(0, 0.1, 0.2);
+    window.addEventListener("experience:aspire", () => {
+      this.aspireSound.stop();
+      this.aspireSound.play();
+      this.aspireSound.fade(0, this.aspireVolume, 1000);
+    });
 
-    //   // this.soundWalk.volume = Math.random() * 0.1 + 0.05 - 0.05;
-    //   this.soundWalk.play();
-    // });
+    window.addEventListener("experience:stopAspire", () => {
+      this.aspireSound.fade(this.aspireSound.volume(), 0, 1000);
+      this.delayEvent(1, this.stopAspireSound);
+    });
+  }
 
-    // window.addEventListener("game:stopWalking", () => {
-    //   this.soundWalk.fade(0.2, 0, 0.2);
-    // });
+  delayEvent(duration, callBack) {
+    return setTimeout(() => callBack.call(this), duration * 1000);
+  }
 
-    // window.addEventListener("game:hit", () => {
-    //   this.soundWalk.stop();
-    // });
-
-    // window.addEventListener("game:restart", () => {
-    //   this.regenerate.play();
-    //   this.soundLoop.fade(0, this.loopVolume, 1);
-    // });
+  stopMachineTypingSound() {
+    this.machineTyping.stop();
+  }
+  stopAspireSound() {
+    this.aspireSound.stop();
   }
 }
