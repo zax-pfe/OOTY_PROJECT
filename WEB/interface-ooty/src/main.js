@@ -4,6 +4,7 @@ import setupCursor from "./cursor.js";
 import createLoadingMatrix from "./loadingMatrix.js";
 import TerminalBackground from "./TerminalBackground.js";
 import SoundManager from "./SoundManager.js";
+import IntroManager from "./IntroManager.js";
 
 const form = document.querySelector("#chat-form");
 const input = document.querySelector("#message");
@@ -18,6 +19,7 @@ let typing = false;
 new TerminalBackground(document.getElementById("bg"));
 const wifiSocket = new WifiSocket();
 const soundManager = new SoundManager();
+new IntroManager();
 
 function eventCaller(eventName, eventData = {}) {
   window.dispatchEvent(new CustomEvent(eventName, eventData));

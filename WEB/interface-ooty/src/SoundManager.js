@@ -2,7 +2,6 @@ import { Howl } from "howler";
 
 export default class SoundManager {
   constructor() {
-    console.log("sound manager init");
     // this.soundLight = new Howl({ src: ["./Sounds/soundLight.wav"], volume: 0.2 });
 
     // this.soundResponse = new Howl({

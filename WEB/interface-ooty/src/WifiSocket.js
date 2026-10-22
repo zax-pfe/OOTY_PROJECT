@@ -2,9 +2,24 @@ export default class WifiSocket {
   constructor() {
     this.ws = new WebSocket("ws://192.168.4.1:81");
 
-    this.ws.addEventListener("message", (event) => {
-      console.log("Message reçu du serveur ", event.data);
+    this.powerOn = false;
+
+    this.ws.addEventListener("open", () => {
+      console.log("Connected to ESP");
     });
+
+    this.ws.addEventListener("message", (event) => {
+      console.log("received from ESP ", event.data);
+      if (this.powerOn) return;
+      if (event.data == "esp:powerOn") {
+        this.powerOn = true;
+        this.eventCaller("experience:powerOn");
+      }
+    });
+  }
+
+  eventCaller(eventName, eventData = {}) {
+    window.dispatchEvent(new CustomEvent(eventName, eventData));
   }
 
   receiveOn() {

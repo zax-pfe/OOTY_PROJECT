@@ -28,6 +28,17 @@ body {
   background-color: $background-color;
 }
 
+.intro-screen {
+  position: fixed;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  pointer-events: none;
+  background-color: $background-color;
+  opacity: 1;
+}
+
 .background-canvas {
   position: fixed;
   inset: 0;
