@@ -11,6 +11,10 @@ export default class Request {
     this.pending = false;
   }
 
+  reset() {
+    this.conversation = [];
+  }
+
   async ask(userMessage, onReply = () => {}) {
     const message = userMessage.trim();
     if (!message) {

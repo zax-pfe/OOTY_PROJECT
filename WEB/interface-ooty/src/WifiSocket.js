@@ -38,8 +38,19 @@ export default class WifiSocket {
       return false;
     }
 
-    console.log("sending message");
+    console.log("sending infection message");
     this.ws.send("experience:infection");
+    return true;
+  }
+
+  sendResetMessage() {
+    if (this.ws.readyState !== WebSocket.OPEN) {
+      console.warn("Wi-Fi socket is not connected; message skipped");
+      return false;
+    }
+
+    console.log("sending reset message");
+    this.ws.send("experience:reset");
     return true;
   }
 }

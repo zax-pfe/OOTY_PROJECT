@@ -45,13 +45,26 @@ document.addEventListener("keydown", (event) => {
 });
 
 form.addEventListener("submit", async (event) => {
-  eventCaller("experience:loading");
-  typing = false;
   event.preventDefault();
 
   const message = input.value.trim();
   if (!message || input.disabled) return;
 
+  if (message === "/reset") {
+    request.reset();
+    output.replaceChildren();
+    document.body.classList.remove("chat-started");
+    input.value = "";
+    followLatestMessage = true;
+    typing = false;
+    input.focus({ preventScroll: true });
+    input.dispatchEvent(new Event("input"));
+    wifiSocket.sendResetMessage();
+    return;
+  }
+
+  eventCaller("experience:loading");
+  typing = false;
   wifiSocket.sendMessage();
 
   document.body.classList.add("chat-started");
