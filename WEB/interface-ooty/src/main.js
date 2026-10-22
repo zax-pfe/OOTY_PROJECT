@@ -3,6 +3,7 @@ import WifiSocket from "./WifiSocket.js";
 import setupCursor from "./cursor.js";
 import createLoadingMatrix from "./loadingMatrix.js";
 import TerminalBackground from "./TerminalBackground.js";
+import SoundManager from "./SoundManager.js";
 
 const form = document.querySelector("#chat-form");
 const input = document.querySelector("#message");
@@ -12,9 +13,15 @@ const output = document.querySelector("#output");
 const historySize = 5;
 const request = new Request(true, historySize);
 let followLatestMessage = true;
+let typing = false;
 
 new TerminalBackground(document.getElementById("bg"));
 const wifiSocket = new WifiSocket();
+const soundManager = new SoundManager();
+
+function eventCaller(eventName, eventData = {}) {
+  window.dispatchEvent(new CustomEvent(eventName, eventData));
+}
 
 function showLatestMessage() {
   if (followLatestMessage) {
@@ -36,6 +43,8 @@ document.addEventListener("keydown", (event) => {
 });
 
 form.addEventListener("submit", async (event) => {
+  eventCaller("experience:loading");
+  typing = false;
   event.preventDefault();
 
   const message = input.value.trim();
@@ -61,7 +70,12 @@ form.addEventListener("submit", async (event) => {
     const data = await request.ask(message, (reply) => {
       aiMessage.textContent = reply;
       showLatestMessage();
+      if (!typing) {
+        eventCaller("experience:machineType");
+        typing = true;
+      }
     });
+
     console.log("Model :", data);
     aiMessage.textContent = data.reply;
   } catch (error) {
