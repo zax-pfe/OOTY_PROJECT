@@ -7,8 +7,8 @@ export default class SoundManager {
     this.soundVersion = "A";
     // _______________________ Volume ______________________ //
     this.backGroundSoundVolume = 0.4;
-    this.machineTypingVolume = 0.6;
-    this.aspireVolume = 0.5;
+    this.machineTypingVolume = 0.4;
+    this.aspireVolume = 0.4;
 
     this.machineTyping = new Howl({
       src: ["./sounds/machineTyping.mp3"],

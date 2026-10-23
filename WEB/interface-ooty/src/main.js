@@ -13,7 +13,7 @@ const output = document.querySelector("#output");
 // Nombre d'echanges precedents conserves (une question + une reponse).
 const historySize = 5;
 // Duree minimale de chargement en secondes avant l'envoi au modele.
-const minimumLoadingDuration = 3;
+const minimumLoadingDuration = 2;
 // Intervalle minimal entre caracteres affiches en streaming, en secondes (0 = immediat).
 const streamDuration = 0.05;
 const request = new Request(true, historySize, streamDuration);
